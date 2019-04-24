@@ -6,7 +6,7 @@ def process_embarkment(df):
 
    ports = {"S": 0, "C": 1, "Q": 2}
    df['Embarked'] = df['Embarked'].map(ports)
-   print("INFO: port of embarkment (0=S, 1=C, 2=Q):")
+   print("INFO: port of embarkation (0=Southampton, 1=Cherbourg, 2=Queenstown):")
    print( df['Embarked'].value_counts() )
 
 def process_family(df):
