@@ -1,6 +1,14 @@
 import numpy as np
 import pandas as pd
 
+def process_embarkment(df):
+   df['Embarked'].fillna('S', inplace=True )
+
+   ports = {"S": 0, "C": 1, "Q": 2}
+   df['Embarked'] = df['Embarked'].map(ports)
+   print("INFO: port of embarkment (0=S, 1=C, 2=Q):")
+   print( df['Embarked'].value_counts() )
+
 def process_family(df):
    df['FamilySize'] = df['Parch'] + df['SibSp'] + 1
 

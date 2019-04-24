@@ -38,6 +38,7 @@ data['Died'] = 1 - data['Survived']
 process_family( data )
 process_age(data)
 process_cabin( data )
+process_embarkment( data )
 
 #plt.figure()
 
