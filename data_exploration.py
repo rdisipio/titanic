@@ -38,6 +38,13 @@ plt.figure()
 #plot_1 = data.groupby('Sex').agg('sum')[['Survived','Died']].plot(kind='bar',stacked=True)
 #plt.savefig("fig_01.png")
 
-plot_2 = sns.violinplot(x='Sex', y='Age', hue='Survived',data=data,split=True)
-plt.savefig("fig_02.png")
+#plot_2 = sns.violinplot(x='Sex', y='Age', hue='Survived',data=data,split=True)
+#plt.savefig("fig_02.png")
 
+plt.hist([data[data['Survived'] == 1]['Fare'], data[data['Survived'] == 0]['Fare']], 
+         stacked=True,
+         bins = 20, label = ['Survived','Dead'])
+plt.xlabel('Fare')
+plt.ylabel('Number of Passengers')
+plt.legend()
+plt.savefig("fig_03.png")
