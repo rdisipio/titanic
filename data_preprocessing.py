@@ -57,3 +57,34 @@ def process_cabin(df):
 
    print("INFO: deck info" )
    print( df['Deck'].value_counts() )
+
+
+def process_title(df):
+
+   # 0=officer, 1=Royalty, 2=commoner
+   title_dict = {
+     "Capt": 0,
+     "Col": 0,
+     "Major": 0,
+     "Dr": 0,
+     "Rev": 0,
+     "Jonkheer": 1,
+     "Don": 1,
+     "Sir" : 1,
+     "the Countess": 1,
+     "Lady" : 1,
+     "Mme": 2,
+     "Mlle": 2,
+     "Ms": 2,
+     "Mr" : 2,
+     "Mrs" : 2,
+     "Miss" : 2,
+     "Master" : 2,
+   }
+
+   df['Title'] = df['Name'].map(lambda name:name.split(',')[1].split('.')[0].strip())
+
+   df['Title'] = df.Title.map(title_dict)
+
+   print("INFO: title (0=officer, 1=royalty, 2=commoner):")
+   print( df['Title'].value_counts() )
