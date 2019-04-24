@@ -45,6 +45,18 @@ def process_age(df):
    print("INFO: age category")
    print( df['AgeBin'].value_counts() )
 
+def process_fare(df):
+    df.loc[ df['Fare'] <= 10, 'FareBin'] = 0
+    df.loc[(df['Fare'] > 10) & (df['Fare'] <= 20), 'FareBin'] = 1
+    df.loc[(df['Fare'] > 20) & (df['Fare'] <= 30), 'FareBin']   = 2
+    df.loc[(df['Fare'] > 30) & (df['Fare'] <= 50), 'FareBin']   = 3
+    df.loc[(df['Fare'] > 50) & (df['Fare'] <= 100), 'FareBin']   = 4
+    df.loc[(df['Fare'] > 100) & (df['Fare'] <= 200), 'FareBin']   = 5
+    df.loc[ df['Fare'] > 200, 'FareBin'] = 6
+    df['FareBin'] = df['FareBin'].astype(int)
+    print("INFO: fare category:")
+    print( df['FareBin'].value_counts() )
+
 def process_cabin(df):
 #   import re
    deck = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "U": 8}

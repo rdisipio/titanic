@@ -40,6 +40,7 @@ process_age(data)
 process_cabin( data )
 process_embarkment( data )
 process_title(data)
+process_fare(data)
 
 #plt.figure()
 
