@@ -11,6 +11,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 
+from data_preprocessing import *
+
 #import tensorflow as tf
 
 params = {
@@ -33,6 +35,9 @@ print("INFO: mean survival rate:", data['Survived'].mean() )
 # add custom fields
 data['Died'] = 1 - data['Survived']
 
+process_family( data )
+process_age(data)
+
 plt.figure()
 
 #plot_1 = data.groupby('Sex').agg('sum')[['Survived','Died']].plot(kind='bar',stacked=True)
@@ -41,6 +46,7 @@ plt.figure()
 #plot_2 = sns.violinplot(x='Sex', y='Age', hue='Survived',data=data,split=True)
 #plt.savefig("fig_02.png")
 
+#xedges = (0,10,20,30,40,50,100,500)
 plt.hist([data[data['Survived'] == 1]['Fare'], data[data['Survived'] == 0]['Fare']], 
          stacked=True,
          bins = 20, label = ['Survived','Dead'])
