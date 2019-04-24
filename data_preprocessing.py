@@ -36,3 +36,16 @@ def process_age(df):
 
    print("INFO: age category")
    print( df['AgeBin'].value_counts() )
+
+def process_cabin(df):
+#   import re
+   deck = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "U": 8}
+   df['Cabin'].fillna("U0", inplace=True)
+   df['Deck'] = df['Cabin'].map(lambda x: x[0])
+#   df['Deck'] = df['Cabin'].map(lambda x: re.compile("([a-zA-Z]+)").search(x).group())
+   df['Deck'] = df['Deck'].map(deck)
+   df['Deck'] = df['Deck'].fillna(0)
+   df['Deck'] = df['Deck'].astype(int)
+
+   print("INFO: deck info" )
+   print( df['Deck'].value_counts() )
