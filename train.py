@@ -22,12 +22,13 @@ test_df = pd.read_csv("data/test.csv")
 print("INFO: training sample size:", len(train_df) )
 print("INFO: testing sample size:", len(test_df) )
 
-process_family( train_df )
-process_age(train_df)
-process_cabin( train_df )
-process_embarkment( train_df )
-process_title(train_df)
-process_fare(train_df)
+for data in [ train_df, test_df ]:
+   process_family( data )
+   process_age(data)
+   process_cabin( data )
+   process_embarkment( data )
+   process_title(data )
+   process_fare(data)
 
 X_train = train_df.drop("Survived", axis=1)
 Y_train = train_df["Survived"]

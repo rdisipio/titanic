@@ -37,6 +37,8 @@ def process_age(df):
    df.loc[ df['Age'] > 60, 'AgeBin'] = 6
 
 def process_fare(df):
+    df['Fare'] = df['Fare'].fillna(0)
+    df['Fare'] = df['Fare'].astype(int)
     df.loc[ df['Fare'] <= 10, 'FareBin'] = 0
     df.loc[(df['Fare'] > 10) & (df['Fare'] <= 20), 'FareBin'] = 1
     df.loc[(df['Fare'] > 20) & (df['Fare'] <= 30), 'FareBin']   = 2
