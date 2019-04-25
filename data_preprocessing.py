@@ -6,8 +6,6 @@ def process_embarkment(df):
 
    ports = {"S": 0, "C": 1, "Q": 2}
    df['Embarked'] = df['Embarked'].map(ports)
-   print("INFO: port of embarkation (0=Southampton, 1=Cherbourg, 2=Queenstown):")
-   print( df['Embarked'].value_counts() )
 
 def process_family(df):
    df['FamilySize'] = df['Parch'] + df['SibSp'] + 1
@@ -17,11 +15,7 @@ def process_family(df):
    df.loc[ (df['FamilySizeBin']>=2) & (df['FamilySizeBin']<=4), 'FamilySizeBin' ] = 1
    df.loc[ df['FamilySizeBin']>4, 'FamilySizeBin' ] = 2
 
-   print("INFO: family size (0=single, 1=small family, 2=large family)" )
-   print( df['FamilySizeBin'].value_counts() )
-
 def process_age(df):
-   print("INFO: fixing missing age info" )
    mean = df["Age"].mean()
    std = df["Age"].std()
    is_null = df["Age"].isnull().sum()
@@ -42,9 +36,6 @@ def process_age(df):
    df.loc[(df['Age'] > 45) & (df['Age'] <= 60), 'AgeBin'] = 5
    df.loc[ df['Age'] > 60, 'AgeBin'] = 6
 
-   print("INFO: age category")
-   print( df['AgeBin'].value_counts() )
-
 def process_fare(df):
     df.loc[ df['Fare'] <= 10, 'FareBin'] = 0
     df.loc[(df['Fare'] > 10) & (df['Fare'] <= 20), 'FareBin'] = 1
@@ -54,8 +45,6 @@ def process_fare(df):
     df.loc[(df['Fare'] > 100) & (df['Fare'] <= 200), 'FareBin']   = 5
     df.loc[ df['Fare'] > 200, 'FareBin'] = 6
     df['FareBin'] = df['FareBin'].astype(int)
-    print("INFO: fare category:")
-    print( df['FareBin'].value_counts() )
 
 def process_cabin(df):
 #   import re
@@ -66,9 +55,6 @@ def process_cabin(df):
    df['Deck'] = df['Deck'].map(deck)
    df['Deck'] = df['Deck'].fillna(0)
    df['Deck'] = df['Deck'].astype(int)
-
-   print("INFO: deck info" )
-   print( df['Deck'].value_counts() )
 
 
 def process_title(df):
@@ -97,6 +83,3 @@ def process_title(df):
    df['Title'] = df['Name'].map(lambda name:name.split(',')[1].split('.')[0].strip())
 
    df['Title'] = df.Title.map(title_dict)
-
-   print("INFO: title (0=officer, 1=royalty, 2=commoner):")
-   print( df['Title'].value_counts() )

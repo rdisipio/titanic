@@ -36,11 +36,28 @@ print("INFO: mean survival rate:", data['Survived'].mean() )
 data['Died'] = 1 - data['Survived']
 
 process_family( data )
+print("INFO: family size (0=single, 1=small family, 2=large family)" )
+print( data['FamilySizeBin'].value_counts() )
+
 process_age(data)
+print("INFO: age category")
+print( data['AgeBin'].value_counts() )
+
 process_cabin( data )
+print("INFO: deck info" )
+print( data['Deck'].value_counts() )
+
 process_embarkment( data )
+print("INFO: port of embarkation (0=Southampton, 1=Cherbourg, 2=Queenstown):")
+print( data['Embarked'].value_counts() )
+
 process_title(data)
+print("INFO: title (0=officer, 1=royalty, 2=commoner):")
+print( data['Title'].value_counts() )
+
 process_fare(data)
+print("INFO: fare category:")
+print( data['FareBin'].value_counts() )
 
 #plt.figure()
 
