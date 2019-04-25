@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
 
+def process_gender(df):
+   gender_dict = { "male": 0, "female":1 }
+   df['Sex'] = df['Sex'].map(gender_dict)
+
 def process_embarkment(df):
    df['Embarked'].fillna('S', inplace=True )
 
@@ -70,8 +74,10 @@ def process_title(df):
      "Rev": 0,
      "Jonkheer": 1,
      "Don": 1,
+     "Dona" : 1,
      "Sir" : 1,
      "the Countess": 1,
+     "Countess" : 1,
      "Lady" : 1,
      "Mme": 2,
      "Mlle": 2,
