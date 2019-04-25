@@ -39,8 +39,8 @@ for data in [ train_df, test_df ]:
 
 print(train_df.describe() )
 
-features = [ 'Pclass', 'Sex', 'Embarked', 'FamilySizeBin', 'AgeBin', 'Deck', 'Title', 'FareBin' ]
-to_drop = [ "Name", "PassengerId", "Fare", "Age", "Cabin", "Ticket", 'SibSp', 'Parch']
+features = [ 'Pclass', 'Sex', 'Embarked', 'FamilySize', 
+             'Deck', 'Title', 'Fare', 'FareBin', 'Age', 'AgeBin', ]
 X_train = train_df[features]
 Y_train = train_df["Survived"]
 X_test  = test_df[features]
@@ -71,8 +71,8 @@ Y_pred_bayes = bayes.predict(X_test)
 acc_bayes = round(bayes.score(X_train, Y_train) * 100, 2)
 
 # XGBoost
-#objective = "binary:hinge"
-objective = "binary:logistic"
+objective = "binary:hinge"
+#objective = "binary:logistic"
 bdt = XGBClassifier(objective=objective, max_depth=6)
 bdt.fit( X_train, Y_train )
 Y_pred_bdt = bdt.predict(X_test)
@@ -88,20 +88,21 @@ result_df = results.sort_values(by='Score', ascending=False)
 result_df = result_df.set_index('Score')
 print(result_df.head(9))
 
-scores = cross_val_score(rf, X_train, Y_train, cv=10, scoring = "accuracy")
+scores = cross_val_score(bdt, X_train, Y_train, cv=10, scoring = "accuracy")
 print("INFO: cross-validation")
 print("Scores:", scores)
 print("Mean:", scores.mean())
 print("Standard Deviation:", scores.std())
 
 print("INFO: features ranking")
-importances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(rf.feature_importances_,3)})
+importances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(bdt.feature_importances_,3)})
 importances = importances.sort_values('importance',ascending=False).set_index('feature')
 print(importances.head(len(features)))
 
 print("INFO: preparing submission file:")
 fname = "data/submission.csv"
-df = pd.DataFrame(  [ test_df["PassengerId"], Y_pred_rf ] )
+#df = pd.DataFrame(  [ test_df["PassengerId"], Y_pred_rf ] )
+df = pd.DataFrame(  [ test_df["PassengerId"], Y_pred_bdt ] )
 df = df.transpose()
 df.columns = [ "PassengerId", "Survived"]
 df.set_index("PassengerId",inplace=True)

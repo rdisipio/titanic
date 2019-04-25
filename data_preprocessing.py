@@ -42,7 +42,7 @@ def process_age(df):
 
 def process_fare(df):
     df['Fare'] = df['Fare'].fillna(0)
-    df['Fare'] = df['Fare'].astype(int)
+#    df['Fare'] = df['Fare'].astype(int)
     df.loc[ df['Fare'] <= 10, 'FareBin'] = 0
     df.loc[(df['Fare'] > 10) & (df['Fare'] <= 20), 'FareBin'] = 1
     df.loc[(df['Fare'] > 20) & (df['Fare'] <= 30), 'FareBin']   = 2
@@ -66,15 +66,21 @@ def process_cabin(df):
 def process_title(df):
 
    # 0=officer, 1=Royalty, 2=commoner(male), 3=commoner(female)
+   titles_dict = {
+      "officer" : 0,
+      "royalty" : 1,
+      "man"     : 2,
+      "woman"   : 3
+   }
+
    title_dict = {
      "Capt": 0,
      "Col": 0,
      "Major": 0,
-     "Dr": 0,
-     "Rev": 0,
+     "Dr": 2,
+     "Rev": 2,
      "Jonkheer": 1,
-     "Don": 1,
-     "Dona" : 1,
+     "Don": 2,
      "Sir" : 1,
      "the Countess": 1,
      "Countess" : 1,
@@ -88,6 +94,7 @@ def process_title(df):
      "Master" : 2,
    }
 
+   #18,1,2,"Williams, Mr. Charles Eugene",male,,0,0,244373,13,,S
    df['Title'] = df['Name'].map(lambda name:name.split(',')[1].split('.')[0].strip())
-
    df['Title'] = df.Title.map(title_dict)
+   df['Title'] = df['Title'].fillna(2)
