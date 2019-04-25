@@ -65,7 +65,7 @@ def process_cabin(df):
 
 def process_title(df):
 
-   # 0=officer, 1=Royalty, 2=commoner
+   # 0=officer, 1=Royalty, 2=commoner(male), 3=commoner(female)
    title_dict = {
      "Capt": 0,
      "Col": 0,
@@ -79,12 +79,12 @@ def process_title(df):
      "the Countess": 1,
      "Countess" : 1,
      "Lady" : 1,
-     "Mme": 2,
-     "Mlle": 2,
-     "Ms": 2,
+     "Mme": 3,
+     "Mlle": 3,
+     "Ms": 3,
      "Mr" : 2,
-     "Mrs" : 2,
-     "Miss" : 2,
+     "Mrs" : 3,
+     "Miss" : 3,
      "Master" : 2,
    }
 

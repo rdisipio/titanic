@@ -52,7 +52,7 @@ print("INFO: port of embarkation (0=Southampton, 1=Cherbourg, 2=Queenstown):")
 print( data['Embarked'].value_counts() )
 
 process_title(data)
-print("INFO: title (0=officer, 1=royalty, 2=commoner):")
+print("INFO: title (0=officer, 1=royalty, 2=commoner(male), 3=commoner(female) ):")
 print( data['Title'].value_counts() )
 
 process_fare(data)
