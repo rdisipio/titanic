@@ -11,3 +11,17 @@ https://towardsdatascience.com/predicting-the-survival-of-titanic-passengers-308
 
 Download data from: https://www.kaggle.com/c/3136/download-all
 Put csv files into a ```data``` directory.
+
+# Data exploration
+To produce plots
+
+```
+./data_explanation.py
+```
+
+# Classification
+
+```
+./classify.py
+```
+
