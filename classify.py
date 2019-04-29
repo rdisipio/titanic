@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import cross_val_score
@@ -25,11 +26,13 @@ from data_preprocessing import *
 
 train_df = pd.read_csv("data/train.csv")
 test_df = pd.read_csv("data/test.csv")
+all_df = merge_datasets(train_df, test_df)
 
 # print out example
 print("INFO: training sample size:", len(train_df))
 print("INFO: testing sample size:", len(test_df))
 
+process_title(all_df)
 for data in [train_df, test_df]:
     # order matters!
 
@@ -37,17 +40,19 @@ for data in [train_df, test_df]:
     process_cabin(data)
     process_embarkment(data)
     process_title(data)
-    process_fare(data)
+    process_fare(data, all_df)
     process_gender(data)
-    process_age(data)
+    process_age(data, all_df)
 
 print(train_df.describe())
 
 features = ['Pclass', 'Sex', 'Embarked',
-            'FamilySize', 'Parch', 'SibSp',
+            'FamilySize',  # 'Parch', 'SibSp',
+            #'Singleton', 'LargeFamily', 'SmallFamily',
             'Deck', 'Title',
-            'Fare', 'FareBin',
-            'Age', 'AgeBin', ]
+            'Fare',  # 'FareBin',
+            'Age',  # 'AgeBin',
+            ]
 X_train = train_df[features]
 Y_train = train_df["Survived"]
 X_test = test_df[features]
@@ -73,6 +78,7 @@ X_test = test_df[features]
 #   print( "train", f, X_train[f].isnull().sum(), np.isnan(X_train[f]).sum() )
 #   print( "test", f, X_test[f].isnull().sum(), np.isnan(X_test[f]).sum() )
 
+
 # Random Forest
 params = {'bootstrap': True,
           'max_depth': 6,
@@ -85,18 +91,36 @@ rf.fit(X_train, Y_train)
 Y_pred_rf = rf.predict(X_test)
 rf.score(X_train, Y_train)
 acc_rf = round(rf.score(X_train, Y_train) * 100, 2)
+cv_rf = cross_val_score(rf, X_train, Y_train, cv=20, scoring="accuracy")
+mean_rf = round(cv_rf.mean(), 2)
+std_rf = round(cv_rf.std(), 2)
 
 # Logistic regression
-logreg = LogisticRegression()
+logreg = LogisticRegression(solver='liblinear')  # 'lbfgs')
 logreg.fit(X_train, Y_train)
 Y_pred_logreg = logreg.predict(X_test)
 acc_log = round(logreg.score(X_train, Y_train) * 100, 2)
+cv_log = cross_val_score(logreg, X_train, Y_train, cv=20, scoring="accuracy")
+mean_log = round(cv_log.mean(), 2)
+std_log = round(cv_log.std(), 2)
 
 # Naive Bayes
 bayes = GaussianNB()
 bayes.fit(X_train, Y_train)
 Y_pred_bayes = bayes.predict(X_test)
 acc_bayes = round(bayes.score(X_train, Y_train) * 100, 2)
+cv_bayes = cross_val_score(bayes, X_train, Y_train, cv=20, scoring="accuracy")
+mean_bayes = round(cv_bayes.mean(), 2)
+std_bayes = round(cv_bayes.std(), 2)
+
+# MLP
+mlp = MLPClassifier()
+mlp.fit(X_train, Y_train)
+Y_pred_mlp = mlp.predict(X_test)
+acc_mlp = round(mlp.score(X_train, Y_train) * 100, 2)
+cv_mlp = cross_val_score(mlp, X_train, Y_train, cv=20, scoring="accuracy")
+mean_mlp = round(cv_mlp.mean(), 2)
+std_mlp = round(cv_mlp.std(), 2)
 
 # XGBoost
 #objective = "binary:hinge"
@@ -105,22 +129,22 @@ bdt = XGBClassifier(objective=objective, max_depth=6)
 bdt.fit(X_train, Y_train)
 Y_pred_bdt = bdt.predict(X_test)
 acc_bdt = round(accuracy_score(bdt.predict(X_train), Y_train) * 100, 2)
+cv_bdt = cross_val_score(bdt, X_train, Y_train, cv=20, scoring="accuracy")
+mean_bdt = round(cv_bdt.mean(), 2)
+std_bdt = round(cv_bdt.std(), 2)
 
 # Put results together
 results = pd.DataFrame({
-    'Model': ['RandomForest', 'LogisticRegression', 'NaiveBayes', 'BDT'],
-    'Score': [acc_rf, acc_log, acc_bayes, acc_bdt]
+    'Model': ['RandomForest', 'LogisticRegression', 'NaiveBayes', 'MLP', 'BDT'],
+    'Acc': [acc_rf, acc_log, acc_bayes, acc_mlp, acc_bdt],
+    'CVmean': [mean_rf, mean_log, mean_bayes, mean_mlp, mean_bdt],
+    'CVstd': [std_rf, std_log, std_bayes, std_mlp, std_bdt]
 })
 
-result_df = results.sort_values(by='Score', ascending=False)
-result_df = result_df.set_index('Score')
+result_df = results.sort_values(by='CVmean', ascending=False)
+result_df = result_df.set_index('CVmean')
 print(result_df.head(9))
 
-scores = cross_val_score(bdt, X_train, Y_train, cv=10, scoring="accuracy")
-print("INFO: cross-validation")
-print("Scores:", scores)
-print("Mean:", scores.mean())
-print("Standard Deviation:", scores.std())
 
 print("INFO: features ranking: Random Forest")
 importances = pd.DataFrame(

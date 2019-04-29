@@ -2,6 +2,16 @@ import numpy as np
 import pandas as pd
 
 
+def merge_datasets(df_train, df_test):
+    df_all = df_train.copy()
+    targets = df_train.Survived
+    df_all.drop(['Survived'], 1, inplace=True)
+    df_all.append(df_test)
+    df_all.reset_index(inplace=True)
+    df_all.drop(['index', 'PassengerId'], inplace=True, axis=1)
+    return df_all
+
+
 def process_gender(df):
     gender_dict = {"male": 0, "female": 1}
     df['Sex'] = df['Sex'].map(gender_dict)
@@ -23,13 +33,16 @@ def process_family(df):
         df['FamilySizeBin'] <= 4), 'FamilySizeBin'] = 1
     df.loc[df['FamilySizeBin'] > 4, 'FamilySizeBin'] = 2
 
+    df['Singleton'] = df['FamilySize'].map(lambda s: 1 if s == 1 else 0)
+    df['SmallFamily'] = df['FamilySize'].map(lambda s: 1 if 2 <= s <= 4 else 0)
+    df['LargeFamily'] = df['FamilySize'].map(lambda s: 1 if 5 <= s else 0)
 
-def process_age(df):
+
+def process_age(df, df_all):
 
     # age has a non-uniform distribution, depends on sex, ticket class and title
-    groups = df.groupby(['Sex', 'Pclass', 'Title']).median()
-    df['Age'] = df.apply(lambda row: groups.loc[row.Sex, row.Pclass,
-                                                row.Title].Age if np.isnan(row.Age) else row.Age, axis=1)
+    df['Age'] = df_all.groupby(['Sex', 'Pclass', 'Title'])[
+        'Age'].transform(lambda x: x.fillna(x.median()))
 
     df['AgeBin'] = df['Age'].astype(int)
     df.loc[df['Age'] <= 11, 'AgeBin'] = 0
@@ -41,13 +54,12 @@ def process_age(df):
     df.loc[df['Age'] > 60, 'AgeBin'] = 6
 
 
-def process_fare(df):
+def process_fare(df, df_all):
     # fare has a non-uniform distribution, depends on sex, ticket class and title
-    groups = df.groupby(['Sex', 'Pclass', 'Title']).median()
-    df['Fare'] = df.apply(lambda row: groups.loc[row.Sex, row.Pclass,
-                                                 row.Title].Fare if np.isnan(row.Fare) else row.Fare, axis=1)
-    # df['Fare'] = df['Fare'].fillna(0)
-    #    df['Fare'] = df['Fare'].astype(int)
+    df_all.Fare.fillna(df_all.Fare.mean(), inplace=True)  # fix missing entries
+    df['Fare'] = df_all.groupby(['Sex', 'Pclass', 'Title'])[
+        'Fare'].transform(lambda x: x.fillna(x.median()))
+
     df.loc[df['Fare'] <= 10, 'FareBin'] = 0
     df.loc[(df['Fare'] > 10) & (df['Fare'] <= 20), 'FareBin'] = 1
     df.loc[(df['Fare'] > 20) & (df['Fare'] <= 30), 'FareBin'] = 2
@@ -80,24 +92,32 @@ def process_title(df):
     }
 
     title_dict = {
-        "Capt": 0,
-        "Col": 0,
-        "Major": 0,
-        "Dr": 2,
-        "Rev": 2,
-        "Jonkheer": 1,
-        "Don": 2,
-        "Sir": 1,
-        "the Countess": 1,
-        "Countess": 1,
-        "Lady": 1,
-        "Mme": 3,
-        "Mlle": 3,
-        "Ms": 3,
-        "Mr": 2,
-        "Mrs": 3,
+        "Rev": 0,
+        "Don": 0,
+
+        "Mr": 1,
+        "Dr": 1,
+
+        "Col": 2,
+        "Major": 2,
+        "Capt": 2,
+
         "Miss": 3,
-        "Master": 2,
+        "Mlle": 3,
+
+        "Master": 4,
+
+        "Mrs": 5,
+        "Mme": 5,
+        "Ms": 5,
+
+        "Jonkheer": 6,
+        "Sir": 6,
+
+        "the Countess": 7,
+        "Countess": 7,
+        "Lady": 7,
+
     }
 
     # 18,1,2,"Williams, Mr. Charles Eugene",male,,0,0,244373,13,,S
