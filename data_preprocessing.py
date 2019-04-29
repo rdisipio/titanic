@@ -83,45 +83,28 @@ def process_cabin(df):
 
 def process_title(df):
 
-    # 0=officer, 1=Royalty, 2=commoner(male), 3=commoner(female)
-    titles_dict = {
-        "officer": 0,
-        "royalty": 1,
-        "man": 2,
-        "woman": 3
-    }
-
+   # 0=officer, 1=Royalty, 2=commoner(male), 3=commoner(female)
     title_dict = {
-        "Rev": 0,
-        "Don": 0,
-
-        "Mr": 1,
-        "Dr": 1,
-
-        "Col": 2,
-        "Major": 2,
-        "Capt": 2,
-
+        "Officer": 0,
+        "Royalty": 1,
+        "Mr": 2,
         "Miss": 3,
-        "Mlle": 3,
-
-        "Master": 4,
-
-        "Mrs": 5,
-        "Mme": 5,
-        "Ms": 5,
-
-        "Jonkheer": 6,
-        "Sir": 6,
-
-        "the Countess": 7,
-        "Countess": 7,
-        "Lady": 7,
-
+        "Mrs": 4,
+        "Master": 5,
     }
 
     # 18,1,2,"Williams, Mr. Charles Eugene",male,,0,0,244373,13,,S
+
     df['Title'] = df['Name'].map(lambda name: name.split(',')[
                                  1].split('.')[0].strip())
+
+    df.Title.replace(to_replace=['Dr', 'Rev', 'Col',
+                                 'Major', 'Capt'], value='Officer', inplace=True)
+    df.Title.replace(to_replace=['Dona', 'Jonkheer', 'Countess',
+                                 'Sir', 'Lady', 'Don'], value='Royalty', inplace=True)
+    df.Title.replace({'Mlle': 'Miss', 'Ms': 'Miss',
+                      'Mme': 'Mrs'}, inplace=True)
+
     df['Title'] = df.Title.map(title_dict)
-    df['Title'] = df['Title'].fillna(2)  # default to most probable (male)
+    # default to most probable (male)
+    df['Title'] = df['Title'].fillna(title_dict['Mr'])
