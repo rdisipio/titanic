@@ -74,7 +74,13 @@ X_test = test_df[features]
 #   print( "test", f, X_test[f].isnull().sum(), np.isnan(X_test[f]).sum() )
 
 # Random Forest
-rf = RandomForestClassifier(n_estimators=200)
+params = {'bootstrap': True,
+          'max_depth': 6,
+          'max_features': 'log2',
+          'min_samples_leaf': 3,
+          'min_samples_split': 2,
+          'n_estimators': 100}
+rf = RandomForestClassifier(**params)
 rf.fit(X_train, Y_train)
 Y_pred_rf = rf.predict(X_test)
 rf.score(X_train, Y_train)
@@ -93,8 +99,8 @@ Y_pred_bayes = bayes.predict(X_test)
 acc_bayes = round(bayes.score(X_train, Y_train) * 100, 2)
 
 # XGBoost
-objective = "binary:hinge"
-#objective = "binary:logistic"
+#objective = "binary:hinge"
+objective = "binary:logistic"
 bdt = XGBClassifier(objective=objective, max_depth=6)
 bdt.fit(X_train, Y_train)
 Y_pred_bdt = bdt.predict(X_test)
@@ -116,7 +122,14 @@ print("Scores:", scores)
 print("Mean:", scores.mean())
 print("Standard Deviation:", scores.std())
 
-print("INFO: features ranking")
+print("INFO: features ranking: Random Forest")
+importances = pd.DataFrame(
+    {'feature': X_train.columns, 'importance': np.round(rf.feature_importances_, 3)})
+importances = importances.sort_values(
+    'importance', ascending=False).set_index('feature')
+print(importances.head(len(features)))
+
+print("INFO: features ranking: Boosted Trees")
 importances = pd.DataFrame(
     {'feature': X_train.columns, 'importance': np.round(bdt.feature_importances_, 3)})
 importances = importances.sort_values(
@@ -125,8 +138,8 @@ print(importances.head(len(features)))
 
 print("INFO: preparing submission file:")
 fname = "data/submission.csv"
-df = pd.DataFrame([test_df["PassengerId"], Y_pred_rf])
-#df = pd.DataFrame([test_df["PassengerId"], Y_pred_bdt])
+#df = pd.DataFrame([test_df["PassengerId"], Y_pred_rf])
+df = pd.DataFrame([test_df["PassengerId"], Y_pred_bdt])
 df = df.transpose()
 df.columns = ["PassengerId", "Survived"]
 df.set_index("PassengerId", inplace=True)

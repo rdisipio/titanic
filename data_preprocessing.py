@@ -31,17 +31,6 @@ def process_age(df):
     df['Age'] = df.apply(lambda row: groups.loc[row.Sex, row.Pclass,
                                                 row.Title].Age if np.isnan(row.Age) else row.Age, axis=1)
 
-    #mean = df["Age"].mean()
-    #std = df["Age"].std()
-    #is_null = df["Age"].isnull().sum()
-    # compute random numbers between the mean, std and is_null
-    #rand_age = np.random.randint(mean - std, mean + std, size=is_null)
-    # fill NaN values in Age column with random values generated
-    #age_slice = df["Age"].copy()
-    #age_slice[np.isnan(age_slice)] = rand_age
-    #df["Age"] = age_slice
-    #df["Age"] = df["Age"].astype(int)
-
     df['AgeBin'] = df['Age'].astype(int)
     df.loc[df['Age'] <= 11, 'AgeBin'] = 0
     df.loc[(df['Age'] > 11) & (df['Age'] <= 18), 'AgeBin'] = 1
@@ -53,8 +42,12 @@ def process_age(df):
 
 
 def process_fare(df):
-    df['Fare'] = df['Fare'].fillna(0)
-#    df['Fare'] = df['Fare'].astype(int)
+    # fare has a non-uniform distribution, depends on sex, ticket class and title
+    groups = df.groupby(['Sex', 'Pclass', 'Title']).median()
+    df['Fare'] = df.apply(lambda row: groups.loc[row.Sex, row.Pclass,
+                                                 row.Title].Fare if np.isnan(row.Fare) else row.Fare, axis=1)
+    # df['Fare'] = df['Fare'].fillna(0)
+    #    df['Fare'] = df['Fare'].astype(int)
     df.loc[df['Fare'] <= 10, 'FareBin'] = 0
     df.loc[(df['Fare'] > 10) & (df['Fare'] <= 20), 'FareBin'] = 1
     df.loc[(df['Fare'] > 20) & (df['Fare'] <= 30), 'FareBin'] = 2
@@ -66,7 +59,7 @@ def process_fare(df):
 
 
 def process_cabin(df):
-    #   import re
+        #   import re
     deck = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "U": 8}
     df['Cabin'].fillna("U0", inplace=True)
     df['Deck'] = df['Cabin'].map(lambda x: x[0])
@@ -111,4 +104,4 @@ def process_title(df):
     df['Title'] = df['Name'].map(lambda name: name.split(',')[
                                  1].split('.')[0].strip())
     df['Title'] = df.Title.map(title_dict)
-    df['Title'] = df['Title'].fillna(2)
+    df['Title'] = df['Title'].fillna(2)  # default to most probable (male)
