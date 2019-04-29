@@ -12,6 +12,14 @@ https://towardsdatascience.com/predicting-the-survival-of-titanic-passengers-308
 Download data from: https://www.kaggle.com/c/3136/download-all
 Put csv files into a ```data``` directory.
 
+# Setup environment
+
+Suggested virtualenv based on python3. 
+
+```
+pip3 install --user sklearn numpy scipy matplotlib xgboost
+```
+
 # Data exploration
 To produce plots
 
