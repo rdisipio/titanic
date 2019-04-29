@@ -34,6 +34,7 @@ print("INFO: training sample size:", len(train_df))
 print("INFO: testing sample size:", len(test_df))
 
 process_title(all_df)
+# process_family(all_df)
 for data in [train_df, test_df]:
     # order matters!
 
@@ -47,13 +48,20 @@ for data in [train_df, test_df]:
 
 print(train_df.describe())
 
-features = ['Pclass', 'Sex', 'Embarked',
-            'FamilySize',  # 'Parch', 'SibSp',
-            #'Singleton', 'LargeFamily', 'SmallFamily',
-            'Deck', 'Title',
-            'Fare',  # 'FareBin',
-            'Age',  # 'AgeBin',
-            ]
+features = [
+    'Pclass',
+    'Sex',
+    'Embarked',
+    'FamilySize',
+    #'Parch', 'SibSp',
+    'Singleton', 'LargeFamily', 'SmallFamily',
+    'Deck',
+    'Title',
+    #'Fare',
+    'FareBin',
+    #'Age',
+    'AgeBin',
+]
 X_train = train_df[features]
 Y_train = train_df["Survived"]
 X_test = test_df[features]
@@ -86,7 +94,7 @@ params = {'bootstrap': True,
           'max_features': 'log2',
           'min_samples_leaf': 3,
           'min_samples_split': 2,
-          'n_estimators': 100}
+          'n_estimators': 10}
 rf = RandomForestClassifier(**params)
 rf.fit(X_train, Y_train)
 Y_pred_rf = rf.predict(X_test)
@@ -199,6 +207,11 @@ submission = pd.DataFrame({
     "PassengerId": test_df["PassengerId"],
     "Survived": sevc.predict(X_test)})
 submission.to_csv('data/submission_sevc.csv', index=False)
+
+submission = pd.DataFrame({
+    "PassengerId": test_df["PassengerId"],
+    "Survived": hevc.predict(X_test)})
+submission.to_csv('data/submission_hevc.csv', index=False)
 
 #fname = "data/submission.csv"
 #df = pd.DataFrame([test_df["PassengerId"], Y_pred_sevc])

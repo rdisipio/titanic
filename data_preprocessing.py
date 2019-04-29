@@ -42,18 +42,16 @@ def process_family(df):
 
 def process_age(df, df_all):
 
-    # age has a non-uniform distribution, depends on sex, ticket class and title
-    df['Age'] = df_all.groupby(['Sex', 'Pclass', 'Title'])[
+    # age has a non-uniform distribution, depends on sex, ticket class, title...
+    df['Age'] = df_all.groupby(['Pclass', 'Title', 'Parch'])[
         'Age'].transform(lambda x: x.fillna(x.median()))
 
     df['AgeBin'] = df['Age'].astype(int)
-    df.loc[df['Age'] <= 11, 'AgeBin'] = 0
-    df.loc[(df['Age'] > 11) & (df['Age'] <= 18), 'AgeBin'] = 1
-    df.loc[(df['Age'] > 18) & (df['Age'] <= 25), 'AgeBin'] = 2
-    df.loc[(df['Age'] > 25) & (df['Age'] <= 35), 'AgeBin'] = 3
-    df.loc[(df['Age'] > 35) & (df['Age'] <= 45), 'AgeBin'] = 4
-    df.loc[(df['Age'] > 45) & (df['Age'] <= 60), 'AgeBin'] = 5
-    df.loc[df['Age'] > 60, 'AgeBin'] = 6
+    df.loc[df['Age'] <= 16, 'AgeBin'] = 0
+    df.loc[(df['Age'] > 16) & (df['Age'] <= 32), 'AgeBin'] = 1
+    df.loc[(df['Age'] > 32) & (df['Age'] <= 48), 'AgeBin'] = 2
+    df.loc[(df['Age'] > 48) & (df['Age'] <= 64), 'AgeBin'] = 3
+    df.loc[df['Age'] > 64, 'AgeBin'] = 4
 
 
 def process_fare(df, df_all):
