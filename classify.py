@@ -17,6 +17,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 from sklearn.decomposition import PCA
+from sklearn.ensemble import VotingClassifier
 
 from xgboost import XGBClassifier
 
@@ -133,12 +134,35 @@ cv_bdt = cross_val_score(bdt, X_train, Y_train, cv=20, scoring="accuracy")
 mean_bdt = round(cv_bdt.mean(), 2)
 std_bdt = round(cv_bdt.std(), 2)
 
+# ensamble voting classifier
+# hard: based on majority vote
+# soft: based on average of probablility
+base_models = [
+    ('rf', rf), ('bdt', bdt), ('mlp', mlp)
+]
+
+sevc = VotingClassifier(base_models, voting='soft')
+sevc.fit(X_train, Y_train)
+Y_pred_sevc = pd.DataFrame(sevc.predict(X_test), columns=['sevc'])
+acc_sevc = round(accuracy_score(sevc.predict(X_train), Y_train) * 100, 2)
+cv_sevc = cross_val_score(sevc, X_train, Y_train, cv=20, scoring="accuracy")
+mean_sevc = round(cv_sevc.mean(), 2)
+std_sevc = round(cv_sevc.std(), 2)
+
+hevc = VotingClassifier(base_models, voting='soft')
+hevc.fit(X_train, Y_train)
+Y_pred_hevc = pd.DataFrame(hevc.predict(X_test), columns=['hevc'])
+acc_hevc = round(accuracy_score(hevc.predict(X_train), Y_train) * 100, 2)
+cv_hevc = cross_val_score(hevc, X_train, Y_train, cv=20, scoring="accuracy")
+mean_hevc = round(cv_hevc.mean(), 2)
+std_hevc = round(cv_hevc.std(), 2)
+
 # Put results together
 results = pd.DataFrame({
-    'Model': ['RandomForest', 'LogisticRegression', 'NaiveBayes', 'MLP', 'BDT'],
-    'Acc': [acc_rf, acc_log, acc_bayes, acc_mlp, acc_bdt],
-    'CVmean': [mean_rf, mean_log, mean_bayes, mean_mlp, mean_bdt],
-    'CVstd': [std_rf, std_log, std_bayes, std_mlp, std_bdt]
+    'Model': ['RandomForest', 'LogisticRegression', 'NaiveBayes', 'MLP', 'BDT', 'SEVC', 'HEVC'],
+    'Acc': [acc_rf, acc_log, acc_bayes, acc_mlp, acc_bdt, acc_sevc, acc_hevc],
+    'CVmean': [mean_rf, mean_log, mean_bayes, mean_mlp, mean_bdt, mean_sevc, mean_hevc],
+    'CVstd': [std_rf, std_log, std_bayes, std_mlp, std_bdt, std_sevc, std_hevc]
 })
 
 result_df = results.sort_values(by='CVmean', ascending=False)
@@ -161,11 +185,25 @@ importances = importances.sort_values(
 print(importances.head(len(features)))
 
 print("INFO: preparing submission file:")
-fname = "data/submission.csv"
-#df = pd.DataFrame([test_df["PassengerId"], Y_pred_rf])
-df = pd.DataFrame([test_df["PassengerId"], Y_pred_bdt])
-df = df.transpose()
-df.columns = ["PassengerId", "Survived"]
-df.set_index("PassengerId", inplace=True)
-print(df.head(10))
-df.to_csv(fname, header=True, index=True)
+submission = pd.DataFrame({
+    "PassengerId": test_df["PassengerId"],
+    "Survived": rf.predict(X_test)})
+submission.to_csv('data/submission_rf.csv', index=False)
+
+submission = pd.DataFrame({
+    "PassengerId": test_df["PassengerId"],
+    "Survived": bdt.predict(X_test)})
+submission.to_csv('data/submission_bdt.csv', index=False)
+
+submission = pd.DataFrame({
+    "PassengerId": test_df["PassengerId"],
+    "Survived": sevc.predict(X_test)})
+submission.to_csv('data/submission_sevc.csv', index=False)
+
+#fname = "data/submission.csv"
+#df = pd.DataFrame([test_df["PassengerId"], Y_pred_sevc])
+#df = df.transpose()
+#df.columns = ["PassengerId", "Survived"]
+#df.set_index("PassengerId", inplace=True)
+# print(df.head(10))
+#df.to_csv(fname, header=True, index=True)

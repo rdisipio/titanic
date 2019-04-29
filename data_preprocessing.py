@@ -30,8 +30,10 @@ def process_family(df):
     df['FamilySizeBin'] = df['FamilySize']
     df.loc[df['FamilySizeBin'] == 1, 'FamilySizeBin'] = 0
     df.loc[(df['FamilySizeBin'] >= 2) & (
-        df['FamilySizeBin'] <= 4), 'FamilySizeBin'] = 1
-    df.loc[df['FamilySizeBin'] > 4, 'FamilySizeBin'] = 2
+        df['FamilySizeBin'] <= 3), 'FamilySizeBin'] = 1
+    df.loc[(df['FamilySizeBin'] >= 4) & (
+        df['FamilySizeBin'] <= 5), 'FamilySizeBin'] = 2
+    df.loc[df['FamilySizeBin'] > 4, 'FamilySizeBin'] = 3
 
     df['Singleton'] = df['FamilySize'].map(lambda s: 1 if s == 1 else 0)
     df['SmallFamily'] = df['FamilySize'].map(lambda s: 1 if 2 <= s <= 4 else 0)
