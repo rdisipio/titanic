@@ -35,11 +35,15 @@ print("INFO: mean survival rate:", data['Survived'].mean() )
 # add custom fields
 data['Died'] = 1 - data['Survived']
 
+process_title(data)
+print("INFO: title (0=officer, 1=royalty, 2=commoner(male), 3=commoner(female) ):")
+print( data['Title'].value_counts() )
+
 process_family( data )
 print("INFO: family size (0=single, 1=small family, 2=large family)" )
 print( data['FamilySizeBin'].value_counts() )
 
-process_age(data)
+process_age(data, data)
 print("INFO: age category")
 print( data['AgeBin'].value_counts() )
 
@@ -51,11 +55,7 @@ process_embarkment( data )
 print("INFO: port of embarkation (0=Southampton, 1=Cherbourg, 2=Queenstown):")
 print( data['Embarked'].value_counts() )
 
-process_title(data)
-print("INFO: title (0=officer, 1=royalty, 2=commoner(male), 3=commoner(female) ):")
-print( data['Title'].value_counts() )
-
-process_fare(data)
+process_fare(data, data)
 print("INFO: fare category:")
 print( data['FareBin'].value_counts() )
 
@@ -75,3 +75,15 @@ print( data['FareBin'].value_counts() )
 #plt.ylabel('Number of Passengers')
 #plt.legend()
 #plt.savefig("fig_03.png")
+
+plot_4 = sns.violinplot(x='Pclass', y='Age', hue='Survived',data=data,split=True)
+plt.savefig("fig_04.png")
+
+plot_5 = data.groupby('Pclass').agg('sum')[['Survived','Died']].plot(kind='bar',stacked=True)
+plt.savefig("fig_05.png")
+
+plot_5 = data.groupby('FamilySizeBin').agg('sum')[['Survived','Died']].plot(kind='bar',stacked=True)
+plt.savefig("fig_06.png")
+
+plot_5 = data.groupby('Title').agg('sum')[['Survived','Died']].plot(kind='bar',stacked=True)
+plt.savefig("fig_07.png")

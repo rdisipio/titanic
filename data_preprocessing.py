@@ -46,6 +46,8 @@ def process_age(df, df_all):
     df['Age'] = df_all.groupby(['Pclass', 'Title', 'Parch'])[
         'Age'].transform(lambda x: x.fillna(x.median()))
 
+    # 16 32 48 64
+
     df['AgeBin'] = df['Age'].astype(int)
     df.loc[df['Age'] <= 16, 'AgeBin'] = 0
     df.loc[(df['Age'] > 16) & (df['Age'] <= 32), 'AgeBin'] = 1
@@ -105,6 +107,6 @@ def process_title(df):
     df.Title.replace({'Mlle': 'Miss', 'Ms': 'Miss',
                       'Mme': 'Mrs'}, inplace=True)
 
-    df['Title'] = df.Title.map(title_dict)
+    df['Title'] = df.Title.map(title_dict) # comment out to produce data exploration plot
     # default to most probable (male)
     df['Title'] = df['Title'].fillna(title_dict['Mr'])
