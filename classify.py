@@ -146,7 +146,7 @@ std_bdt = round(cv_bdt.std(), 2)
 # hard: based on majority vote
 # soft: based on average of probablility
 base_models = [
-    ('rf', rf), ('bdt', bdt), ('mlp', mlp)
+    ('rf', rf), ('bdt', bdt), ('mlp', mlp), ('log',logreg), ('nb',bayes)
 ]
 
 sevc = VotingClassifier(base_models, voting='soft')
