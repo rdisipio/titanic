@@ -88,6 +88,9 @@ X_test = test_df[features]
 #   print( "test", f, X_test[f].isnull().sum(), np.isnan(X_test[f]).sum() )
 
 
+# number of cross-validation runs
+n_cv = 50
+
 # Random Forest
 params = {'bootstrap': True,
           'max_depth': 6,
@@ -100,7 +103,7 @@ rf.fit(X_train, Y_train)
 Y_pred_rf = rf.predict(X_test)
 rf.score(X_train, Y_train)
 acc_rf = round(rf.score(X_train, Y_train) * 100, 2)
-cv_rf = cross_val_score(rf, X_train, Y_train, cv=20, scoring="accuracy")
+cv_rf = cross_val_score(rf, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_rf = round(cv_rf.mean(), 2)
 std_rf = round(cv_rf.std(), 2)
 
@@ -109,7 +112,7 @@ logreg = LogisticRegression(solver='liblinear')  # 'lbfgs')
 logreg.fit(X_train, Y_train)
 Y_pred_logreg = logreg.predict(X_test)
 acc_log = round(logreg.score(X_train, Y_train) * 100, 2)
-cv_log = cross_val_score(logreg, X_train, Y_train, cv=20, scoring="accuracy")
+cv_log = cross_val_score(logreg, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_log = round(cv_log.mean(), 2)
 std_log = round(cv_log.std(), 2)
 
@@ -118,7 +121,7 @@ bayes = GaussianNB()
 bayes.fit(X_train, Y_train)
 Y_pred_bayes = bayes.predict(X_test)
 acc_bayes = round(bayes.score(X_train, Y_train) * 100, 2)
-cv_bayes = cross_val_score(bayes, X_train, Y_train, cv=20, scoring="accuracy")
+cv_bayes = cross_val_score(bayes, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_bayes = round(cv_bayes.mean(), 2)
 std_bayes = round(cv_bayes.std(), 2)
 
@@ -127,7 +130,7 @@ mlp = MLPClassifier()
 mlp.fit(X_train, Y_train)
 Y_pred_mlp = mlp.predict(X_test)
 acc_mlp = round(mlp.score(X_train, Y_train) * 100, 2)
-cv_mlp = cross_val_score(mlp, X_train, Y_train, cv=20, scoring="accuracy")
+cv_mlp = cross_val_score(mlp, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_mlp = round(cv_mlp.mean(), 2)
 std_mlp = round(cv_mlp.std(), 2)
 
@@ -138,7 +141,7 @@ bdt = XGBClassifier(objective=objective, max_depth=6)
 bdt.fit(X_train, Y_train)
 Y_pred_bdt = bdt.predict(X_test)
 acc_bdt = round(accuracy_score(bdt.predict(X_train), Y_train) * 100, 2)
-cv_bdt = cross_val_score(bdt, X_train, Y_train, cv=20, scoring="accuracy")
+cv_bdt = cross_val_score(bdt, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_bdt = round(cv_bdt.mean(), 2)
 std_bdt = round(cv_bdt.std(), 2)
 
@@ -153,7 +156,7 @@ sevc = VotingClassifier(base_models, voting='soft')
 sevc.fit(X_train, Y_train)
 Y_pred_sevc = pd.DataFrame(sevc.predict(X_test), columns=['sevc'])
 acc_sevc = round(accuracy_score(sevc.predict(X_train), Y_train) * 100, 2)
-cv_sevc = cross_val_score(sevc, X_train, Y_train, cv=20, scoring="accuracy")
+cv_sevc = cross_val_score(sevc, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_sevc = round(cv_sevc.mean(), 2)
 std_sevc = round(cv_sevc.std(), 2)
 
@@ -161,7 +164,7 @@ hevc = VotingClassifier(base_models, voting='hard')
 hevc.fit(X_train, Y_train)
 Y_pred_hevc = pd.DataFrame(hevc.predict(X_test), columns=['hevc'])
 acc_hevc = round(accuracy_score(hevc.predict(X_train), Y_train) * 100, 2)
-cv_hevc = cross_val_score(hevc, X_train, Y_train, cv=20, scoring="accuracy")
+cv_hevc = cross_val_score(hevc, X_train, Y_train, cv=n_cv, scoring="accuracy")
 mean_hevc = round(cv_hevc.mean(), 2)
 std_hevc = round(cv_hevc.std(), 2)
 
