@@ -157,7 +157,7 @@ cv_sevc = cross_val_score(sevc, X_train, Y_train, cv=20, scoring="accuracy")
 mean_sevc = round(cv_sevc.mean(), 2)
 std_sevc = round(cv_sevc.std(), 2)
 
-hevc = VotingClassifier(base_models, voting='soft')
+hevc = VotingClassifier(base_models, voting='hard')
 hevc.fit(X_train, Y_train)
 Y_pred_hevc = pd.DataFrame(hevc.predict(X_test), columns=['hevc'])
 acc_hevc = round(accuracy_score(hevc.predict(X_train), Y_train) * 100, 2)
