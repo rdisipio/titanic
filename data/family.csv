@@ -1,0 +1,13 @@
+PassengerId,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+10000,3,"Di Sipio, Mr. Riccardo",male,37,1,2,0000000,10.0,C000,S
+10001,3,"Ferranti, Mrs. Elena",female,35,2,4,0000000,10.0,C000,S
+10002,3,"Di Sipio, Master. Pietro",male,5,1,2,0000000,10.0,C000,S
+10003,3,"Di Sipio, Miss. Matilde",female,2,1,2,0000000,10.0,C000,S
+10004,2,"Ferranti, Mr. Andrea",male,66,1,2,0000001,50.0,D001,S
+10005,2,"Cimarelli, Mrs. Claudia",female,59,1,2,0000001,50.0,D001,S
+10006,1,"Ferranti, Mr. Ettore",male,37,2,4,0000002,150.0,A000,S
+10007,1,"Rondini, Mrs. Elisa",female,38,1,2,0000002,150.0,A000,S
+10008,1,"Ferranti, Miss. Sofia",female,6,1,2,0000002,150.0,A000,S
+10009,1,"Ferranti, Master. Davide",male,4,1,2,0000002,150.0,A000,S
+10010,2,"Di Sipio, Mr. Lorenzo",male,75,1,1,0000003,50.0,D001,S
+10011,2,"Molisani, Mrs. Rita Maria",female,66,1,1,0000003,50.0,D001,S
