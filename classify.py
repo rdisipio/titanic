@@ -89,7 +89,7 @@ X_test = test_df[features]
 
 
 # number of cross-validation runs
-n_cv = 50
+n_cv = 10
 
 # Random Forest
 params = {'bootstrap': True,
